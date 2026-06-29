@@ -200,7 +200,7 @@ Adicionar aqui comandos específicos (Docker, etc.) conforme o projeto for ganha
 |-----------|---------|
 | Código-fonte | `target/` |
 | `pom.xml` | `.idea/`, `.vscode/` (salvo settings compartilhados) |
-| `README.md`, `AGENTS.md` | Logs, `.class` |
+| `README.md`, `AGENTS.md`, `PROMPTS.md`, `.cursor/rules/` | Logs, `.class` |
 | `docker-compose.yml` (se existir) | Credenciais reais (`.env` com secrets) |
 | Collection Postman (se existir) | |
 
@@ -226,3 +226,19 @@ Atualizar conforme o projeto crescer:
 - Registrar decisões arquiteturais relevantes
 
 Não duplicar o que já está no `README.md`: README = como rodar e apresentar; AGENTS.md = como contribuir e manter consistência.
+
+---
+
+## Prompting (Cursor / IA)
+
+Boas práticas para formular prompts neste repositório estão em **[PROMPTS.md](./PROMPTS.md)**. Regras essenciais do agente também em **`.cursor/rules/prompting.mdc`** (`alwaysApply: true`).
+
+Resumo:
+
+- Seja **claro e direto** — objetivo, arquivos `@` relevantes e critérios de aceite
+- Prefira **`@arquivo` específico** a `@codebase` sozinho; cite `@AGENTS.md` em tarefas de código
+- Peça **implementação** quando quiser código (`implementar`, `corrigir`), não apenas sugestões
+- Delimite **escopo** para evitar refactors ou arquivos extras não solicitados
+- Inclua **verificação** (`mvn test`) no pedido quando aplicável
+
+Referências: [Claude prompting best practices](https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/claude-prompting-best-practices) · [Cursor forum](https://forum.cursor.com/t/cursor-prompt-engineering-best-practices/1592)

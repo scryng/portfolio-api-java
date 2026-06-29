@@ -1,0 +1,35 @@
+---
+description: Boas práticas de prompting e comportamento do agente neste repositório
+alwaysApply: true
+---
+
+# Prompting e comportamento do agente
+
+Referência completa: `PROMPTS.md`. Regras do projeto: `AGENTS.md`.
+
+## Contexto
+
+- Preferir ler arquivos específicos antes de buscar no codebase inteiro.
+- Nunca especular sobre código não lido — investigar `@` arquivos ou buscar no repo antes de afirmar.
+- Antes de criar helper, util ou método novo, verificar se já existe equivalente no projeto.
+
+## Interpretação do pedido
+
+- Pedidos de implementação (`implementar`, `adicionar`, `corrigir`) → executar no código, não só sugerir.
+- Pedidos de explicação ou revisão → responder sem alterar arquivos, salvo se o usuário pedir mudanças.
+- Se o pedido for vago, inferir a ação mais útil com base em `AGENTS.md` ou pedir esclarecimento mínimo.
+
+## Escopo
+
+- Diff mínimo: apenas o necessário para a tarefa.
+- Não refatorar código adjacente, não adicionar abstrações extras, não criar arquivos temporários sem remover ao final.
+- Não alterar comportamento fora do escopo declarado.
+
+## Verificação
+
+- Após mudanças de código: rodar `mvn test` (e `mvn compile` se alterou dependências ou build).
+- Seguir convenções de `AGENTS.md`: camadas MVC, DTOs, commits iuricode, branches `{prefix}/{description}`.
+
+## Segurança
+
+- Confirmar com o usuário antes de ações destrutivas ou irreversíveis: force push, hard reset, delete em massa, drop de dados, push sem solicitação explícita.
