@@ -10,9 +10,9 @@
 		<relativePath />
 	</parent>
 	<groupId>com.scryng</groupId>
-	<artifactId>portfolio-api-java</artifactId>
+	<artifactId>portfolio-api</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>portfolio-api-java</name>
+	<name>portfolio-api</name>
 	<description>Portfolio management API</description>
 	<url />
 	<licenses>
