@@ -201,7 +201,7 @@ Adicionar aqui comandos específicos (Docker, etc.) conforme o projeto for ganha
 | Código-fonte | `target/` |
 | `pom.xml` | `.idea/`, `.vscode/` (salvo settings compartilhados) |
 | `README.md`, `AGENTS.md`, `PROMPTS.md`, `.cursor/rules/` | Logs, `.class` |
-| `docker-compose.yml` (se existir) | Credenciais reais (`.env` com secrets) |
+| `docker-compose.yml`, `.env.example` (se existir) | Credenciais reais (`.env`) |
 | Collection Postman (se existir) | |
 
 ---
