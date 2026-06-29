@@ -1,9 +1,21 @@
 package com.scryng.portfolio.domain.enums;
 
 public enum ProjectStatus {
-	PLANNING,
+	UNDER_ANALYSIS,
+	ANALYSIS_COMPLETED,
+	ANALYSIS_APPROVED,
+	STARTED,
+	PLANNED,
 	IN_PROGRESS,
-	ON_HOLD,
-	COMPLETED,
-	CANCELLED
+	CLOSED,
+	CANCELLED;
+
+	public boolean isDeletable() {
+		return this != STARTED && this != IN_PROGRESS && this != CLOSED;
+	}
+
+	public boolean isActive() {
+		return this != CLOSED && this != CANCELLED;
+	}
+
 }

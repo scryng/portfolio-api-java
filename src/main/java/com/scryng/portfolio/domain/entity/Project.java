@@ -2,6 +2,8 @@ package com.scryng.portfolio.domain.entity;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.HashSet;
+import java.util.Set;
 
 import com.scryng.portfolio.domain.enums.ProjectStatus;
 
@@ -14,9 +16,10 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
-import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -25,7 +28,7 @@ import lombok.Setter;
 @Table(name = "projects")
 @Getter
 @Setter
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@NoArgsConstructor
 public class Project {
 
 	@Id
@@ -53,6 +56,13 @@ public class Project {
 	@ManyToOne(fetch = FetchType.LAZY, optional = false)
 	@JoinColumn(name = "manager_id", nullable = false)
 	private Member manager;
+
+	@ManyToMany(fetch = FetchType.LAZY)
+	@JoinTable(
+			name = "project_members",
+			joinColumns = @JoinColumn(name = "project_id"),
+			inverseJoinColumns = @JoinColumn(name = "member_id"))
+	private Set<Member> members = new HashSet<>();
 
 	@Enumerated(EnumType.STRING)
 	@Column(nullable = false, length = 30)
