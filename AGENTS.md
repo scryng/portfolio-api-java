@@ -54,6 +54,85 @@ Diretrizes por camada:
 
 ---
 
+## Contexto do sistema
+
+API REST para gerenciar o **portfólio de projetos** de uma empresa: ciclo de vida completo, equipe, orçamento e risco.
+
+### Estrutura de pacotes
+
+```
+com.scryng.portfolio
+├── config/              # Security, OpenAPI, beans
+├── controller/          # REST endpoints
+├── client/              # Integração com API externa de membros
+├── mock/                # Mock da API externa de membros
+├── dto/request|response/
+├── mapper/              # MapStruct
+├── repository/
+├── service/
+├── domain/
+│   ├── entity/
+│   ├── enums/
+│   ├── exception/       # BusinessException e subclasses
+│   └── rule/            # Regras de negócio isoladas (sem Spring)
+```
+
+### Entidades
+
+**Project:** `name`, `startDate`, `expectedEndDate`, `actualEndDate`, `totalBudget`, `description`, `manager` (Member), `status`, `members` (equipe).
+
+**Member:** espelho local de membro vindo da API externa — `externalId`, `name`, `role`. **Não** expor CRUD de membros na API principal.
+
+### Status do projeto (`ProjectStatus`)
+
+Ordem obrigatória (não pular etapas):
+
+`UNDER_ANALYSIS` → `ANALYSIS_COMPLETED` → `ANALYSIS_APPROVED` → `STARTED` → `PLANNED` → `IN_PROGRESS` → `CLOSED`
+
+- `CANCELLED` pode ser aplicado **a qualquer momento**
+- Transições devem respeitar a sequência lógica
+
+### Risco (`RiskLevel`) — calculado dinamicamente
+
+Não persistir; calcular na resposta com base em orçamento e prazo (`startDate` → `expectedEndDate`):
+
+| Nível | Condição |
+|-------|----------|
+| `LOW` | orçamento ≤ R$ 100.000 **e** prazo ≤ 3 meses |
+| `MEDIUM` | orçamento entre R$ 100.001 e R$ 500.000 **ou** prazo entre 3 e 6 meses |
+| `HIGH` | orçamento > R$ 500.000 **ou** prazo > 6 meses |
+
+Prioridade: `HIGH` > `MEDIUM` > `LOW` quando múltiplas condições se aplicam.
+
+### Membros e equipe
+
+- Cadastro de membros **somente** via API externa mockada (`/api/external/members`) — nome + `role`
+- Apenas `MemberRole.EMPLOYEE` pode ser alocado à equipe do projeto
+- Cada projeto: **mínimo 1** e **máximo 10** membros na equipe
+- Um membro não pode estar em mais de **3** projetos ativos (status ≠ `CLOSED` e ≠ `CANCELLED`)
+
+### Exclusão de projetos
+
+Bloqueada quando status ∈ `{ STARTED, IN_PROGRESS, CLOSED }`.
+
+### Relatório (`GET /api/portfolio/report`)
+
+- Quantidade de projetos por status
+- Total orçado por status
+- Média de duração dos projetos `CLOSED` (`actualEndDate - startDate`)
+
+### Fases de implementação
+
+| Fase | Escopo |
+|------|--------|
+| 1 | Enums, entidades, exceptions, rules, repos, DTOs, config, mock externo |
+| 2 | Services (CRUD, status, alocação), controllers, exception handler |
+| 3 | Relatório, testes (rules + services), README |
+
+Implementar **uma fase por vez**, validando com `mvn test` antes de avançar.
+
+---
+
 ## Branches
 
 Padrão: **GitHub Flow** (branch principal estável + branches de curta duração).
@@ -201,7 +280,7 @@ Adicionar aqui comandos específicos (Docker, etc.) conforme o projeto for ganha
 | Código-fonte | `target/` |
 | `pom.xml` | `.idea/`, `.vscode/` (salvo settings compartilhados) |
 | `README.md`, `AGENTS.md`, `PROMPTS.md`, `.cursor/rules/` | Logs, `.class` |
-| `docker-compose.yml`, `.env.example` (se existir) | Credenciais reais (`.env`) |
+| `docker-compose.yml`, `.env.sample` | Credenciais reais (`.env`) |
 | Collection Postman (se existir) | |
 
 ---
@@ -221,9 +300,8 @@ Adicionar aqui comandos específicos (Docker, etc.) conforme o projeto for ganha
 
 Atualizar conforme o projeto crescer:
 
-- Adicionar estrutura de pastas quando estabilizar
-- Documentar regras de negócio quando forem definidas
 - Registrar decisões arquiteturais relevantes
+- Refinar regras de negócio se o domínio evoluir
 
 Não duplicar o que já está no `README.md`: README = como rodar e apresentar; AGENTS.md = como contribuir e manter consistência.
 

@@ -188,6 +188,54 @@ Verificar com mvn test (e mvn compile se alterou dependências).
 
 ---
 
+## Implementação por fases (portfólio)
+
+Sempre citar `@AGENTS.md` (regras de negócio e pacotes). **Uma fase por prompt** — não implementar tudo de uma vez.
+
+### Fase 1 — Domínio e infraestrutura
+
+```
+Seguindo @AGENTS.md, implementar Fase 1:
+- Enums: ProjectStatus, RiskLevel, MemberRole
+- Entidades atualizadas (Project.members, Member.externalId/role)
+- domain.exception (BusinessException + específicas)
+- domain.rule isoladas (risco, transição de status, exclusão, alocação)
+- Repositories, DTOs, MapStruct mappers
+- Config (Security, OpenAPI)
+- Mock API externa de membros (/api/external/members)
+Verificar: mvn compile
+```
+
+### Fase 2 — Services e API de projetos
+
+```
+Seguindo @AGENTS.md, implementar Fase 2:
+- ProjectService: CRUD, update status, delete com regras
+- Member sync via client da API externa
+- Controllers + GlobalExceptionHandler
+- Paginação e filtro por status na listagem
+Verificar: mvn test
+```
+
+### Fase 3 — Relatório, testes e docs
+
+```
+Seguindo @AGENTS.md, implementar Fase 3:
+- PortfolioReportService + endpoint GET /api/portfolio/report
+- Testes unitários das rules e services (≥ 70% em service*)
+- README.md com setup completo
+Verificar: mvn verify
+```
+
+### Regras críticas (não esquecer)
+
+- `RiskLevel` é **calculado**, não persistido
+- Status: sequência fixa; `CANCELLED` a qualquer momento
+- Membros: só via API externa mock; alocação só `EMPLOYEE`
+- Exclusão bloqueada em `STARTED`, `IN_PROGRESS`, `CLOSED`
+
+---
+
 ## Referências
 
 - [Claude — Prompting best practices](https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/claude-prompting-best-practices)
