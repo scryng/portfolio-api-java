@@ -1,4 +1,4 @@
-package com.scryng.portfolio.domain;
+package com.scryng.portfolio.domain.entity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
